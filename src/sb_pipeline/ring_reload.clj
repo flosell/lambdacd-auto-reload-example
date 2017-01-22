@@ -1,17 +1,16 @@
 (ns sb-pipeline.ring-reload
   (:require [sb-pipeline.core :as core]))
 
-; this stores the current pipeline and gives us access when reloading it
-(defonce pipelines-atom
+(defonce pipeline-atom
          (atom nil))
 
-(defn- shutdown-old-pipelines [old-pipelines]
-  (if-let [old-ctx (:context (:sb old-pipelines))]
+(defn- shutdown-old-pipeline [old-pipeline]
+  (if-let [old-ctx (:context old-pipeline)]
     ((:shutdown-sequence (:config old-ctx)) old-ctx)))
 
 (def app
-  (let [_ (shutdown-old-pipelines @pipelines-atom)
+  (let [_ (shutdown-old-pipeline @pipeline-atom)
         {routes    :routes
-         pipelines :pipelines} (core/start-everything)]
-    (reset! pipelines-atom pipelines)
+         pipeline :pipeline} (core/start-everything)]
+    (reset! pipeline-atom pipeline)
     routes))

@@ -17,7 +17,4 @@
               git/list-changes
               lein-test))
      (alias "Deploy"
-            info)
-     #_(alias "Post-deploy"
-              steps/slack)
-     ))
+            info)))
