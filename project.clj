@@ -14,6 +14,5 @@
                  [cheshire "5.7.0"]]
   :profiles {:uberjar {:aot :all}}
   :plugins [[lein-ring "0.9.7"]]
-  :ring {:handler sb-pipeline.core/app
-         :init sb-pipeline.core/start-pipelines}
+  :ring {:handler sb-pipeline.ring-reload/app}
   :main sb-pipeline.core)

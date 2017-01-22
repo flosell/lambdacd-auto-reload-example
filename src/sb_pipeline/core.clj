@@ -25,33 +25,22 @@
           (slack/send-message event)))
       (recur))))
 
-(defonce pipelines-atom ; this stores the current pipeline and gives us access when reloading it
-  (atom nil))
-
-(defn shutdown-old-pipelines [old-pipelines]
-  (if-let [old-ctx (:context (:sb old-pipelines))]
-    ((:shutdown-sequence (:config old-ctx)) old-ctx)))
-
-(def app
-  (let [_         (shutdown-old-pipelines @pipelines-atom)
-        pipelines {:sb (lambdacd/assemble-pipeline pipeline/sb {:home-dir   "builds/sb"
+(defn start-everything []
+  (let [pipelines {:sb (lambdacd/assemble-pipeline pipeline/sb {:home-dir   "builds/sb"
                                                                 :name       "hidden"
                                                                 :max-builds 3
                                                                 :ui-config  {:expand-active-default   true
                                                                              :expand-failures-default true}})}
         routes    (compojure/routes
                     (compojure/context "/sb" [] (ui/ui-for (:sb pipelines))))]
-    (reset! pipelines-atom pipelines)
+    (git/init-ssh!)
+    (failure-notifications (:context (:sb pipelines)))
     (runners/start-one-run-after-another (:sb pipelines))
-    routes))
-
-(defn start-pipelines []
-  (git/init-ssh!)
-
-  ;(failure-notifications (:context (:sb pipelines)))
-  )
+    {:routes    routes
+     :pipelines pipelines}))
 
 (defn -main [& args]
-  (start-pipelines)
-  (ring-server/serve app {:open-browser? true
-                          :port          8080}))
+  (let [{routes    :routes
+         pipelines :pipelines} (start-everything)]
+    (ring-server/serve routes {:open-browser? true
+                               :port          8080})))
