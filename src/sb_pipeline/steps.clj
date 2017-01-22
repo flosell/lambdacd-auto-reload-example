@@ -12,7 +12,7 @@
 
 (defn lein-test [args ctx]
   (shell/bash ctx (:cwd args)
-              "echo lein test"
+              "echo lein-test"
               "sleep 10"))
 
 (defn info [args ctx]
