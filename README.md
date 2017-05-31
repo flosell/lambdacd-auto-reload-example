@@ -22,6 +22,6 @@ An example of how to structure a LambdaCD project with support for auto-reloadin
     * `logback.xml` contains a sample log configuration
 
 
-## Resources
+## Alternative Solution using `mount`
 
-* [LambdaCD Issue #153](https://github.com/flosell/lambdacd/issues/153)
+* @kwladyka posted a solution using `mount` in [LambdaCD Issue #153](https://github.com/flosell/lambdacd/issues/153#issuecomment-274599151)
